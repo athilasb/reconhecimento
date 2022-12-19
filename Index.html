@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+<!-- Formulário para o usuário fazer o upload das imagens de rostos -->
+<form id="face-form">
+    <label for="reference-face">Imagem de referência:</label>
+    <input type="file" id="reference-face" accept="image/*">
+    <br>
+    <label for="test-face">Imagem de teste:</label>
+    <input type="file" id="test-face" accept="image/*">
+    <br>
+    <button type="button" id="compare-button">Comparar rostos</button>
+  </form>
+  
+  <!-- Div para exibir o resultado da comparação -->
+  <div id="result"></div>
+  
+  <script>
+    // Função de comparação da inteligência artificial
+    function compareFaces(face1, face2) {
+      // Cálculo da distância Euclidiana entre as características dos rostos
+      const distance = Math.sqrt(
+        (face1[0] - face2[0]) ** 2 + (face1[1] - face2[1]) ** 2
+      );
+      return distance;
+    }
+  
+    // Obtém os elementos do formulário e do resultado
+    const form = document.getElementById("face-form");
+    const compareButton = document.getElementById("compare-button");
+    const resultDiv = document.getElementById("result");
+  
+    // Adiciona um evento de clique ao botão "Comparar rostos"
+    compareButton.addEventListener("click", () => {
+      // Obtém as imagens de referência e de teste do formulário
+      const referenceFace = form.elements["reference-face"].files[0];
+      const testFace = form.elements["test-face"].files[0];
+  
+      // Verifica se as imagens foram carregadas corretamente
+      if (!referenceFace || !testFace) {
+        resultDiv.innerHTML = "Por favor, selecione as duas imagens para comparar os rostos.";
+        return;
+      }
+  
+      // Extração das características dos rostos a partir das imagens
+      const referenceFeatures = extractFeatures(referenceFace);
+      const testFeatures = extractFeatures(testFace);
+  
+      // Verifica se as características foram extraídas corretamente
+      if (!referenceFeatures || !testFeatures) {
+        resultDiv.innerHTML = "Não foi possível extrair as características dos rostos das imagens selecionadas.";
+        return;
+      }
+  
+      // Classificação do rosto de teste pelo classificador treinado
+      const prediction = classifier.predict(testFeatures);
+  
+      // Verificação se o rosto de teste é igual ao rosto de referência
+      if (prediction === "same") {
+        const distance = compareFaces(referenceFeatures, testFeatures);
+        if (distance < threshold) {
+        resultDiv.innerHTML = "Os rostos são iguais com uma distância de " + distance;
+        } else {
+        resultDiv.innerHTML = "Os rostos são diferentes com uma distância de " + distance;
+        }
+        } else {
+        resultDiv.innerHTML = "Os rostos são diferentes.";
+        }
+        });
+</script>
+  
+       
+  
+</body>
+</html>
